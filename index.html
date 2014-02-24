@@ -173,6 +173,7 @@ settings.get('id');  // undefined
           <li></li>
           <li>
             <pre><code class="language-javascript">settings.idAttribute = "_id";
+settings.set('_id') = "WHAT_EVER_YOU_WANT";
 
 settings.id;   // 그래도 이건 아이디(변수 자체가 Backbone이 지정)
 settings._id;  // undefined
@@ -196,7 +197,7 @@ settings.get('theme'); // 'green'
 </code></pre>
       </section>
       <section>
-        <h2>우아하게 쓰고 싶은데 </h2>
+        <h2>우아하게 쓰려면..</h2>
         <pre><code class="language-javascript">var settings = Alloy.Models.instance('settings');
 settings.save('theme', 'green');</code></pre>
         <pre><code class="language-javascript">var settings = Alloy.Models.instance('settings');
@@ -209,8 +210,7 @@ settings.get('theme'); // 'green'
         <h2>모델 정의에서 해결 </h2>
         <pre><code class="language-javascript">config: {
   adapter: {
-    type: "properties",
-    collection_name: "settings"
+    type: "properties"
   }
 },
 extendModel: function(Model) {
@@ -297,7 +297,7 @@ extendModel: function(Model) {
         </ul>
       </section>
       <section>
-        <h2>model.defaults에 객체를 넣으면</h2>
+        <h2>model.defaults에 객체를 넣으려면</h2>
         <pre><code class="language-javascript">// photo model
 defaults: {
   url: "/photo/defaults.png",
@@ -315,13 +315,13 @@ defaults: {
             <pre><code class="language-javascript">var myPhoto1 = Alloy.createModel('photo');
 var myPhoto2 = Alloy.createModel('photo');
 
-myPhoto1.get('owner').age // -1
-myPhoto2.get('owner').age // -1
+myPhoto1.get('owner').age; // -1
+myPhoto2.get('owner').age; // -1
 
 myPhoto2.get('owner').age = 22;
 
-myPhoto1.get('owner').age // 22
-myPhoto2.get('owner').age // 22</code></pre>
+myPhoto1.get('owner').age; // 22
+myPhoto2.get('owner').age; // 22</code></pre>
           </li>
           <li>in JavaScript, objects are passed by reference</li>
         </ul>
@@ -341,7 +341,7 @@ defaults: function(){
 </code></pre>
       </section>
       <section>
-        <h2>tutorial</h2>
+        <h2>tutorials</h2>
         <hr>
         <h4>http://backbonejs.org</h4>
         <h4>http://backbonetutorials.com</h4>
