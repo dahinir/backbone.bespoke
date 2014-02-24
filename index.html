@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>backbone.js :tips & tricks</title>
+    <link rel="stylesheet" href="styles/styles.css"/>
+  </head>
+  <body>
+    <article>
+      <section>
+        <h1>tips & tricks</h1>
+        <h3>Backbone.js</h3>
+      </section>
+      <section>
+        <h2>신대현</h2>
+        <ul>
+          <li>@dahinir</li>
+          <li>백수</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Alloy X Backbone</h2>
+      </section>
+      <section>
+        <h2>Vesion</h2>
+        <ul>
+          <li></li>
+          <li>Backbone 최신 1.1.2 </li>
+          <li>Alloy 사용 버젼 0.9.2</li>
+          <li><a href="http://docs.appcelerator.com/backbone/0.9.2/">http://docs.appcelerator.com/backbone/0.9.2/</a></li>
+        </ul>
+      </section>
+      <section>
+        <h2>앱 설정값을 backbone.js 로 저장 해보자!</h2>
+        <h3>전역적으로 사용될 설정값들. 예를 들어</h3>
+        <hr>
+        <h3>run_count</h3>
+        <h3>theme</h3>
+        <h3>active_tab</h3>
+        <h3>..</h3>
+      </section>
+      <section>
+        <h2>저장된 앱 셋팅을 불러오자</h2>
+        <pre><code class="language-javascript">// 아마도 alloy.js(앱 시작)에 쓰일 코드 
+// 저장된 앱 설정값을 불러온다.
+Alloy.Globals.settings = {
+  run_count: Ti.App.Properties.getString("run_count"),
+  theme: Ti.App.Properties.getString("theme"),
+  active_tab: Ti.App.Properties.getString("active_tab")
+  // etcs..
+};
+</code></pre>
+      </section>
+      <section>
+        <h2>Backbone.model 을 쓰자</h2>
+        <pre><code class="language-javascript">var settings = Alloy.createModel('settings');
+
+// 저장된 앱 설정값을 불러온다.
+settings.set({
+  run_count: Ti.App.Properties.getString("run_count"),
+  theme: Ti.App.Properties.getString("theme"),
+  active_tab: Ti.App.Properties.getString("active_tab")
+});
+
+// 이제 settings를 쓸 수 있다!
+myTabGroup.setActiveTab( settings.get('active_tab') );
+</code></pre>
+      </section>
+      <section>
+        <h2>이렇게 쓰고 싶어</h2>
+        <pre><code class="language-javascript">var settings = Alloy.createModel('settings');
+
+// 저장된 앱 설정값을 불러온다.
+settings.fetch();
+</code></pre>
+      </section>
+      <section>
+        <h2>.save() 했던걸 .fetch() 했더니.. </h2>
+        <ul>
+          <li>
+            <pre><code class="language-javascript">// 싱글톤으로 생성 
+var settings = Alloy.Models.instance('settings');
+settings.save('theme', 'green');
+
+// 앱이 종료 된것 처럼 완전 삭제 
+settings.clear();
+delete settings;
+
+// 재시작 된 것 처럼 처음부터 다시
+var settings = Alloy.Models.instance('settings');
+settings.fetch();
+settings.get('theme'); // undefined</code></pre>
+          </li>
+          <li>안되네?</li>
+        </ul>
+      </section>
+      <section>
+        <h2>아 맞다 id</h2>
+        <ul>
+          <li>같은 id를 지정해야 같은걸 넣고 뺀다. </li>
+          <li>
+            <pre><code class="language-javascript">var settings = Alloy.Models.instance('settings');
+// 아이디를 뭘로 하든 같은것만 쓰면 된다 
+settings.id = "WHAT_EVER_YOU_WANT";
+settings.save('theme', 'green');</code></pre>
+          </li>
+          <li>
+            <pre><code class="language-javascript">var settings = Alloy.Models.instance('settings');
+settings.id = "WHAT_EVER_YOU_WANT";
+settings.fetch();
+settings.get('theme'); // 'green'
+</code></pre>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h1>model.id</h1>
+        <h3>vs</h3>
+        <h1>model.set('id')</h1>
+        <ul>
+          <li></li>
+          <li>with <code class="language-javascript">idAttribute</code></li>
+        </ul>
+      </section>
+      <section>
+        <h2>먼저 model.attributes</h2>
+        <ul>
+          <li>
+            <pre><code class="language-javascript">var settings = Alloy.createModel('settings');
+settings.set('run_count', 3);
+
+settings.attributes.run_count; //3
+settings.get('run_count'); // 3</code></pre>
+          </li>
+          <li>일반적으로 쓰이는 모델 변수들은 실제로 model.attributes 에 저장됨 </li>
+        </ul>
+      </section>
+      <section>
+        <h2>하지만 id 는 특별한 property</h2>
+        <ul>
+          <li>각 모델의 identity를 결정하는 meta data</li>
+          <li>하지만 model.attributes 에도 저장됨 </li>
+          <li>
+            <pre><code class="language-javascript">settings.set('id', 'WHAT_EVER_YOU_WANT');
+
+settings.id;     // WHAT_EVER_YOU_WANT
+settings.get('id'); // WHAT_EVER_YOU_WANT
+</code></pre>
+          </li>
+          <li>
+            <pre><code class="language-javascript">settings.id = 'WHAT_EVER_YOU_WANT';
+
+settings.id;    // WHAT_EVER_YOU_WANT
+settings.get('id');  // undefined
+</code></pre>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h2>id</h2>
+        <hr>
+        <ul>
+          <li>동작은 <code class="language-javascript">model.id</code> 기반으로 함  </li>
+          <li>id는 일반 변수 중 하나로 지정되서 사용됨</li>
+          <li>햇갈? .idAttribute 기본값이 'id' 라서 햇갈햇반</li>
+        </ul>
+      </section>
+      <section>
+        <h2>model.idAttribute = _id;</h2>
+        <ul>
+          <li></li>
+          <li>
+            <pre><code class="language-javascript">settings.idAttribute = "_id";
+
+settings.id;   // 그래도 이건 아이디(변수 자체가 Backbone이 지정)
+settings._id;  // undefined
+settings.attributes._id; // 이게 아이디로 사용
+settings.get('_id');     // 이것도
+settings.get('id');      // undefined</code></pre>
+          </li>
+          <li>.idAttribute는 .attributes의 변수중 id로 사용할 변수의 이름을 지정 </li>
+        </ul>
+      </section>
+      <section>
+        <h2>아까 그거</h2>
+        <pre><code class="language-javascript">var settings = Alloy.Models.instance('settings');
+settings.id = "WHAT_EVER_YOU_WANT";
+settings.save('theme', 'green');</code></pre>
+        <pre><code class="language-javascript">var settings = Alloy.Models.instance('settings');
+settings.id = "WHAT_EVER_YOU_WANT";
+settings.fetch();
+
+settings.get('theme'); // 'green'
+</code></pre>
+      </section>
+      <section>
+        <h2>우아하게 쓰고 싶은데 </h2>
+        <pre><code class="language-javascript">var settings = Alloy.Models.instance('settings');
+settings.save('theme', 'green');</code></pre>
+        <pre><code class="language-javascript">var settings = Alloy.Models.instance('settings');
+settings.fetch();
+
+settings.get('theme'); // 'green'
+</code></pre>
+      </section>
+      <section>
+        <h2>모델 정의에서 해결 </h2>
+        <pre><code class="language-javascript">config: {
+  adapter: {
+    type: "properties",
+    collection_name: "settings"
+  }
+},
+extendModel: function(Model) {
+  _.extend(Model.prototype, {
+    id: "WHAT_EVER_YOU_WANT"
+  });
+  return Model;
+}
+</code></pre>
+      </section>
+      <section>
+        <h2>되진 되지만..</h2>
+        <pre><code class="language-javascript">var settings = Alloy.Models.instance('settings');
+settings.fetch();
+
+settings.id;  // WHAT_EVER_YOU_WANT
+settings.get('id')  // undefined
+</code></pre>
+      </section>
+      <section>
+        <h2>.attributes에 셋팅되야 할것은 .defaults에</h2>
+        <ul>
+          <li>
+            <pre><code class="language-javascript">config: { .. },
+extendModel: function(Model) {
+  _.extend(Model.prototype, {
+    defaults: {
+      id: "WHAT_EVER_YOU_WANT"
+    }
+  });
+  return Model;
+}</code></pre>
+          </li>
+          <li>appcelerator문서에는 defaults를 config안에 넣으라 되있지만..</li>
+        </ul>
+      </section>
+      <section>
+        <h2>type: "properties" 일 때..</h2>
+        <pre><code class="language-javascript">// config :Alloy가 다루는 백본 설정 
+config: { 
+  defaults: {
+    theme: "blue" // 안돼요!
+  },
+  adapter: {
+    type: "properties", // not "sql"
+    collection_name: "settings",
+    idAttribute: "_id" // 안돼요!!
+  }
+},
+extendModel: function(Model) {
+  _.extend(Model.prototype, {
+    idAttribute: "_id", // 여기!!
+    id: "WHAT_EVER_YOU_WANT", // 굳이쓴다면.. not _id
+    defaults: { // attributes의 기본값
+      _id: "WHAT_EVER_YOU_WANT",
+      theme: "blue" // 여기!!
+    }
+  });
+  return Model;
+}
+</code></pre>
+      </section>
+      <section>
+        <h2>type: "properties" 결론</h2>
+        <ul>
+          <li></li>
+          <li>Alloy보단 Backbone을 믿는게..</li>
+          <li>-</li>
+          <li>내가 사용할 모델 프로퍼티와 id는 <code class="language-javascript">.get()</code>과 <code class="language-javascript">.set()</code>을 사용한다.</li>
+          <li>이것들은 <code class="language-javascript">model.attributes</code>에 저장된다.</li>
+          <li>이것들의 기본값은 <code class="language-javascript">model.defaults</code> 객체에 선언한다.</li>
+          <li>-</li>
+          <li>id를 제외한 특수 목적의 백본 변수 기본값은 <code class="language-javascript">Model.prototype</code>에 직접</li>
+          <li>id는 model.id에도 저장되고 model.attributes.id에도 저장되서 햇반</li>
+        </ul>
+      </section>
+      <section>
+        <h2>model.cid 는 또 뭐야</h2>
+        <ul>
+          <li></li>
+          <li>백본이 알아서 생성하는 아이디</li>
+          <li>클라이언트에서만 유일한 값</li>
+          <li>같은 인스턴스인지 체크할때 유용</li>
+        </ul>
+      </section>
+      <section>
+        <h2>model.defaults에 객체를 넣으면</h2>
+        <pre><code class="language-javascript">// photo model
+defaults: {
+  url: "/photo/defaults.png",
+  owner: {
+    name: "Me",
+    age: -1
+  }
+}
+</code></pre>
+      </section>
+      <section>
+        <h2>?!!</h2>
+        <ul>
+          <li>
+            <pre><code class="language-javascript">var myPhoto1 = Alloy.createModel('photo');
+var myPhoto2 = Alloy.createModel('photo');
+
+myPhoto1.get('owner').age // -1
+myPhoto2.get('owner').age // -1
+
+myPhoto2.get('owner').age = 22;
+
+myPhoto1.get('owner').age // 22
+myPhoto2.get('owner').age // 22</code></pre>
+          </li>
+          <li>in JavaScript, objects are passed by reference</li>
+        </ul>
+      </section>
+      <section>
+        <h2>define defaults as a function</h2>
+        <pre><code class="language-javascript">// photo model
+defaults: function(){
+  return {
+    url: "/photo/defaults.png",
+    owner: {
+      name: "Me",
+      age: -1
+    }
+  };
+}
+</code></pre>
+      </section>
+      <section>
+        <h2>tutorial</h2>
+        <hr>
+        <h4>http://backbonejs.org</h4>
+        <h4>http://backbonetutorials.com</h4>
+        <h4>http://addyosmani.github.io/backbone-fundamentals/</h4>
+      </section>
+      <section>
+        <h2>Keep Your Models Fat!</h2>
+        <h2>Code Strong!</h2>
+      </section>
+    </article>
+    <script src="scripts/scripts.js"></script>
+  </body>
+</html>
